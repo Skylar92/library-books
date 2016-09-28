@@ -1,10 +1,10 @@
 package com.library.books.controllers;
 
-import com.library.books.exceptions.ServiceTemporaryNotWorking;
+import com.library.books.exceptions.ServerException;
 import com.library.books.integration.BooksClient;
-import com.library.books.integration.response.AbstractResponse;
-import com.library.books.integration.response.Response;
-import com.library.books.integration.response.books.SelectSearchBooks;
+import com.library.books.integration.AbstractResponse;
+import com.library.books.integration.Response;
+import com.library.books.integration.common.BooksResponse;
 import com.library.books.responses.book.SearchBookResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -28,10 +28,9 @@ public class BookController {
     @RequestMapping(value = "/search/{pageNumber}/{recordsNumber}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public AbstractResponse searchBooks(@PathVariable("pageNumber") int pageNumber, @PathVariable("recordsNumber") int recordsNumber) throws Exception {
-        SelectSearchBooks selectSearchBooks = booksClient.searchBooks(pageNumber, recordsNumber);
-        if (selectSearchBooks.isError())
-            throw new ServiceTemporaryNotWorking();
-        return SearchBookResponse.createSearchBookResponse(selectSearchBooks.getBooks());
+        BooksResponse booksResponse = booksClient.searchBooks(pageNumber, recordsNumber);
+        if (booksResponse.isError()) throw new ServerException();
+        return SearchBookResponse.createSearchBookResponse(booksResponse.getBooks());
     }
 
     //http://localhost:8080/book/find/1

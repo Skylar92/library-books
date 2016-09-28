@@ -1,7 +1,7 @@
 package com.library.books.responses.book;
 
-import com.library.books.integration.dto.Book;
-import com.library.books.integration.response.Response;
+import com.library.books.integration.Response;
+import com.library.books.integration.common.Book;
 
 import java.util.List;
 

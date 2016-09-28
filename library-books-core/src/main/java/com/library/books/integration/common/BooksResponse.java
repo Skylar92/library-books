@@ -1,24 +1,23 @@
-package com.library.books.integration.response.books;
+package com.library.books.integration.common;
 
-import com.library.books.integration.dto.Book;
-import com.library.books.integration.response.Response;
+import com.library.books.integration.Response;
 
 import java.util.List;
 
 /**
- * Created by skylar on 20.09.16
+ * Created by mhalych on 9/28/2016.
  */
-public class SelectSearchBooks extends Response {
+public class BooksResponse extends Response {
 
     private List<Book> books;
 
-    public SelectSearchBooks(List<Book> books) {
+    public BooksResponse(List<Book> books) {
         super(false, null);
         this.books = books;
     }
 
-    public SelectSearchBooks(boolean error, String message) {
-        super(error, message);
+    public BooksResponse() {
+        super(false, null);
     }
 
     public List<Book> getBooks() {
@@ -30,18 +29,11 @@ public class SelectSearchBooks extends Response {
     }
 
     @Override
-    public String toString() {
-        return "SelectSearchBooks{" +
-                "books=" + books +
-                '}';
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        SelectSearchBooks that = (SelectSearchBooks) o;
+        BooksResponse that = (BooksResponse) o;
 
         return books != null ? books.equals(that.books) : that.books == null;
 
@@ -50,5 +42,12 @@ public class SelectSearchBooks extends Response {
     @Override
     public int hashCode() {
         return books != null ? books.hashCode() : 0;
+    }
+
+    @Override
+    public String toString() {
+        return "BooksResponse{" +
+                "books=" + books +
+                '}';
     }
 }

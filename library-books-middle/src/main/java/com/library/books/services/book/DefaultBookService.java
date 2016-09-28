@@ -1,7 +1,7 @@
 package com.library.books.services.book;
 
+import com.library.books.integration.common.Book;
 import com.library.books.storage.StorageBook;
-import com.library.books.integration.dto.Book;
 import com.library.books.utils.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

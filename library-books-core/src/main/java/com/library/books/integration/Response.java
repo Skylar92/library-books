@@ -1,4 +1,4 @@
-package com.library.books.integration.response;
+package com.library.books.integration;
 
 /**
  * Created by skylar on 13.07.16.

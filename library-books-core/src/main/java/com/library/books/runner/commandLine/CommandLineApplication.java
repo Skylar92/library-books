@@ -32,11 +32,15 @@ public class CommandLineApplication {
             CommandLine commandLine = parser.parse(options, args);
             processCommandLineResult(commandLine);
         } catch (ParseException e) {
-            logger.warning(e);
+            logger.error("Error parsing command line", e);
         }
     }
 
     private void processCommandLineResult(CommandLine commandLine) {
+        processDebugOption(commandLine);
+    }
+
+    private void processDebugOption(CommandLine commandLine) {
         if (commandLine.hasOption(CommandLineProperties.DEBUG))
             System.setProperty(CommandLineProperties.DEBUG, "true");
     }

@@ -1,6 +1,6 @@
 package com.library.books.storage;
 
-import com.library.books.integration.dto.Book;
+import com.library.books.integration.common.Book;
 
 import java.util.List;
 

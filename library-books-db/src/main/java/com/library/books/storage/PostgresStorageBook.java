@@ -1,11 +1,11 @@
 package com.library.books.storage;
 
+import com.library.books.integration.common.Book;
+
 import java.util.List;
 
 //import org.hibernate.SessionFactory;
 //import org.springframework.beans.factory.annotation.Autowired;
-
-import com.library.books.integration.dto.Book;
 
 public class PostgresStorageBook implements StorageBook {
 	

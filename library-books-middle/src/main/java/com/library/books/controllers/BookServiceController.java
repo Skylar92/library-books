@@ -1,9 +1,9 @@
 package com.library.books.controllers;
 
-import com.library.books.integration.dto.Book;
-import com.library.books.integration.response.AbstractResponse;
-import com.library.books.integration.response.Response;
-import com.library.books.integration.response.books.SelectSearchBooks;
+import com.library.books.integration.AbstractResponse;
+import com.library.books.integration.Response;
+import com.library.books.integration.common.Book;
+import com.library.books.integration.common.BooksResponse;
 import com.library.books.services.book.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -30,7 +30,7 @@ public class BookServiceController {
     public AbstractResponse searchBooks(@PathVariable("pageNumber") int pageNumber, @PathVariable("recordsNumber") int recordsNumber) {
         try {
             List<Book> books = bookService.searchBooks(pageNumber, recordsNumber);
-            return new SelectSearchBooks(books);
+            return new BooksResponse(books);
         } catch (Exception ex) {
             //print stack trace
             return Response.fail(ex.getMessage());

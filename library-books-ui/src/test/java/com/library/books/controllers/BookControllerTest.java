@@ -3,9 +3,9 @@ package com.library.books.controllers;
 import com.google.gson.*;
 import com.library.books.handlers.GlobalExceptionHandler;
 import com.library.books.integration.BooksClient;
-import com.library.books.integration.dto.Book;
-import com.library.books.integration.response.Response;
-import com.library.books.integration.response.books.SelectSearchBooks;
+import com.library.books.integration.Response;
+import com.library.books.integration.common.Book;
+import com.library.books.integration.common.BooksResponse;
 import com.library.books.responses.book.SearchBookResponse;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +42,7 @@ public class BookControllerTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        this.gson = new GsonBuilder().registerTypeAdapter(Book.class, new BookInstanceCreator()).create();
+        this.gson = new GsonBuilder().create();
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(bookController)
                 .setControllerAdvice(new GlobalExceptionHandler()).build();
@@ -52,10 +51,10 @@ public class BookControllerTest {
     @Test
     public void shouldBeResponseOkWhenCallSearchBooksWithNormalParameters() throws Exception {
         List<Book> fixtureBooks = new ArrayList<>();
-        fixtureBooks.add(new Book.DefaultBook());
-        fixtureBooks.add(new Book.DefaultBook());
-        fixtureBooks.add(new Book.DefaultBook());
-        SelectSearchBooks selectSearchBooks = new SelectSearchBooks(fixtureBooks);
+        fixtureBooks.add(new Book());
+        fixtureBooks.add(new Book());
+        fixtureBooks.add(new Book());
+        BooksResponse selectSearchBooks = new BooksResponse(fixtureBooks);
 
         Mockito.when(bookService.searchBooks(Mockito.anyInt(), Mockito.anyInt())).thenReturn(selectSearchBooks);
         MvcResult mvcResult = mockMvc.perform(post("/search/1/10")
@@ -89,13 +88,4 @@ public class BookControllerTest {
         mockMvc.perform(post("/search/1")).andExpect(status().isNotFound());
     }
 
-    private static class BookInstanceCreator implements InstanceCreator {
-
-        @Override
-        public Object createInstance(Type type) {
-            if (type.getTypeName().equals("com.library.books.integration.dto.Book"))
-                return new Book.DefaultBook();
-            return null;
-        }
-    }
 }
