@@ -1,7 +1,6 @@
 package com.library.books;
 
 
-import com.library.books.runner.CommonBootRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 @ComponentScan
 @EnableAutoConfiguration
-public class LibraryBooksUIStarter extends CommonBootRunner {
+public class LibraryBooksUIStarter {
 
     public static void main(String... args) {
         SpringApplication.run(LibraryBooksUIStarter.class, args);

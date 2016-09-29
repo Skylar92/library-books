@@ -9,13 +9,16 @@ import org.springframework.web.client.RestTemplate;
  * Created by skylar on 13.07.16.
  */
 @Component
-public class BooksClient {
+public class BooksClient extends AbstractApplicationClient {
+
+    private static final String SEARCH_BOOKS = "/search/%s/%s";
 
     @Autowired
     private RestTemplate template;
 
     public BooksResponse searchBooks(int pageNumber, int recordsNumber) throws Exception {
-        return null;
+        String endPoint = getServerUrl() + String.format(SEARCH_BOOKS, pageNumber, recordsNumber);
+        return performRequest(() -> template.postForObject(endPoint, null, BooksResponse.class));
     }
 
 }

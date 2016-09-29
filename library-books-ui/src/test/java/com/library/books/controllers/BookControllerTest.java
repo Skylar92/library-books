@@ -1,6 +1,8 @@
 package com.library.books.controllers;
 
 import com.google.gson.*;
+import com.library.books.exceptions.ErrorCode;
+import com.library.books.exceptions.ServerException;
 import com.library.books.handlers.GlobalExceptionHandler;
 import com.library.books.integration.BooksClient;
 import com.library.books.integration.Response;
@@ -9,11 +11,20 @@ import com.library.books.integration.common.BooksResponse;
 import com.library.books.responses.book.SearchBookResponse;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.env.SpringApplicationJsonEnvironmentPostProcessor;
+import org.springframework.boot.test.IntegrationTest;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -26,6 +37,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
+ * todo change static code 'http://localhost:8080/' to dynamic value
  * Created by skylar on 13.07.16.
  */
 public class BookControllerTest {
@@ -57,7 +69,7 @@ public class BookControllerTest {
         BooksResponse selectSearchBooks = new BooksResponse(fixtureBooks);
 
         Mockito.when(bookService.searchBooks(Mockito.anyInt(), Mockito.anyInt())).thenReturn(selectSearchBooks);
-        MvcResult mvcResult = mockMvc.perform(post("/search/1/10")
+        MvcResult mvcResult = mockMvc.perform(post("http://localhost:8080/book/search/1/10")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -72,9 +84,23 @@ public class BookControllerTest {
     @Test
     public void shouldBeResponseFailWhenBookServiceThrowException() throws Exception {
         Mockito.when(bookService.searchBooks(Mockito.anyInt(), Mockito.anyInt())).thenThrow(new IllegalArgumentException("Something bad"));
-        MvcResult mvcResult = mockMvc.perform(post("/search/1/10")
+        MvcResult mvcResult = mockMvc.perform(post("http://localhost:8080/book/search/1/10")
                 .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(status().isInternalServerError())
+                .andReturn();
+        Mockito.verify(bookService, Mockito.only()).searchBooks(1, 10);
+        String responseJson = mvcResult.getResponse().getContentAsString();
+        Response response = gson.fromJson(responseJson, Response.class);
+        assertTrue(response.isError());
+        assertEquals("Something bad", response.getMessage());
+    }
+
+    @Test
+    public void shouldBeResponseFailWhenBookServiceThrowServerException() throws Exception {
+        Mockito.when(bookService.searchBooks(Mockito.anyInt(), Mockito.anyInt())).thenThrow(new ServerException(ErrorCode.UNKNOWN, "Something bad"));
+        MvcResult mvcResult = mockMvc.perform(post("http://localhost:8080/book/search/1/10")
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(status().isOk())
                 .andReturn();
         Mockito.verify(bookService, Mockito.only()).searchBooks(1, 10);
         String responseJson = mvcResult.getResponse().getContentAsString();

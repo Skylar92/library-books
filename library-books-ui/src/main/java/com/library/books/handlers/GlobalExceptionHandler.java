@@ -3,6 +3,7 @@ package com.library.books.handlers;
 import com.library.books.exceptions.ServerException;
 import com.library.books.integration.AbstractResponse;
 import com.library.books.integration.Response;
+import com.library.books.responses.ResponseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -31,9 +32,9 @@ public class GlobalExceptionHandler {
     @ResponseStatus(value = HttpStatus.OK, code = HttpStatus.OK)
     @ExceptionHandler(ServerException.class)
     @ResponseBody
-    public AbstractResponse handleException(ServerException ex) {
+    public ResponseException handleException(ServerException ex) {
         logger.log(Level.INFO, ex.getMessage(), ex);
-        return Response.fail(ex.getMessage());
+        return new ResponseException(ex.getErrorCode(), ex.getMessage());
     }
 
 
