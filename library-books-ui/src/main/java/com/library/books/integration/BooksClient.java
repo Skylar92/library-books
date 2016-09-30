@@ -2,6 +2,7 @@ package com.library.books.integration;
 
 import com.library.books.integration.common.BooksResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,12 +14,9 @@ public class BooksClient extends AbstractApplicationClient {
 
     private static final String SEARCH_BOOKS = "/search/%s/%s";
 
-    @Autowired
-    private RestTemplate template;
-
     public BooksResponse searchBooks(int pageNumber, int recordsNumber) throws Exception {
         String endPoint = getServerUrl() + String.format(SEARCH_BOOKS, pageNumber, recordsNumber);
-        return performRequest(() -> template.postForObject(endPoint, null, BooksResponse.class));
+        return performRequest(endPoint, BooksResponse.class);
     }
 
 }

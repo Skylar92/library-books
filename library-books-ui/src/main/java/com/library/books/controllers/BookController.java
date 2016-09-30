@@ -28,9 +28,9 @@ public class BookController {
     @RequestMapping(value = "/search/{pageNumber}/{recordsNumber}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public AbstractResponse searchBooks(@PathVariable("pageNumber") int pageNumber, @PathVariable("recordsNumber") int recordsNumber) throws Exception {
-        logger.debug(String.format("Search pageNumber %s with %s recordsNumber", pageNumber, recordsNumber));
+        logger.info(String.format("Search pageNumber %s with %s recordsNumber", pageNumber, recordsNumber));
         BooksResponse booksResponse = booksClient.searchBooks(pageNumber, recordsNumber);
-        logger.debug("Books was found", booksResponse.getBooks());
+        logger.info("Books founded", booksResponse.getBooks());
         return SearchBookResponse.createSearchBookResponse(booksResponse.getBooks());
     }
 
