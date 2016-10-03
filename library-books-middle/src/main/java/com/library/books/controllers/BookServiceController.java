@@ -16,13 +16,13 @@ import java.util.List;
  * skylar
  */
 @RestController
-@RequestMapping("/book")
+@RequestMapping("api/book")
 public class BookServiceController {
 
     @Autowired
     private BookService bookService;
 
-    //http://localhost:8080/book/search/1/10
+    //http://localhost:8080/api/book/search/1/10
     @RequestMapping(value = "/search/{pageNumber}/{recordsNumber}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE, consumes = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
     public AbstractResponse searchBooks(@PathVariable("pageNumber") int pageNumber, @PathVariable("recordsNumber") int recordsNumber) {

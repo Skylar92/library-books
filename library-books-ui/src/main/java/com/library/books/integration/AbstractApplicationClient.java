@@ -4,12 +4,8 @@ import com.library.books.exceptions.ServerInternalException;
 import com.library.books.exceptions.ServerTemporaryNotWorkingException;
 import com.library.books.properties.RestProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
 import java.util.function.Supplier;
 
 /**
@@ -17,15 +13,15 @@ import java.util.function.Supplier;
  */
 public abstract class AbstractApplicationClient {
 
-    protected static final MediaType DEFAULT_MEDIA_TYPE = MediaType.APPLICATION_JSON_UTF8;
+    private static final String EMPTY_REQUEST = "{}";
 
     @Autowired
     protected RestProperties restProperties;
     @Autowired
     protected RestTemplate restTemplate;
 
-    protected <T extends AbstractResponse> T performRequest(String url, Class<T> aClass) {
-        return performRequest(() -> restTemplate.postForObject(url, DEFAULT_MEDIA_TYPE, aClass));
+    protected <T extends AbstractResponse> T performEmptyPostRequest(String url, Class<T> aClass, Object... uriVariables) {
+        return performRequest(() -> restTemplate.postForObject(url, EMPTY_REQUEST, aClass, uriVariables));
     }
 
     protected  <T extends AbstractResponse> T performRequest(Supplier<T> action) {
@@ -33,6 +29,10 @@ public abstract class AbstractApplicationClient {
         if (t.isError())
             throw new ServerInternalException(t.getMessage());
         return t;
+    }
+
+    protected String endpoint(String address) {
+        return getServerUrl() + address;
     }
 
     protected String getServerUrl() {
@@ -46,4 +46,5 @@ public abstract class AbstractApplicationClient {
             throw new ServerTemporaryNotWorkingException(ex);
         }
     }
+
 }
