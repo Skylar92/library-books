@@ -13,4 +13,6 @@ public interface Mapper<T, C> {
      */
     C convert(T t, Class<C> aClass);
 
+    T reverseConvert(C c, Class<T> tClass);
+
 }

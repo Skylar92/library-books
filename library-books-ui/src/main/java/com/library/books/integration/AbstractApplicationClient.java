@@ -24,6 +24,15 @@ public abstract class AbstractApplicationClient {
         return performRequest(() -> restTemplate.postForObject(url, EMPTY_REQUEST, aClass, uriVariables));
     }
 
+    protected <T extends AbstractResponse> T performPostRequest(String url, Object request, Class<T> aClass, Object... uriVariables) {
+        return performRequest(() -> restTemplate.postForObject(url, request, aClass, uriVariables));
+    }
+
+    protected <T extends AbstractResponse> T performGetRequest(String url,  Class<T> aClass, Object... uriVariables) {
+        return performRequest(() -> restTemplate.getForObject(url, aClass, uriVariables));
+    }
+
+
     protected  <T extends AbstractResponse> T performRequest(Supplier<T> action) {
         T t = execute(action);
         if (t.isError())

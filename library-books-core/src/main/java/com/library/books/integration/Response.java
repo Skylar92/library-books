@@ -13,6 +13,10 @@ public class Response implements AbstractResponse {
         this.message = message;
     }
 
+    public Response() {
+        this(false, null);
+    }
+
     @Override
     public String getMessage() {
         return message;

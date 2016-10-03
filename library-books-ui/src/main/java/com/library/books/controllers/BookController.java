@@ -3,7 +3,9 @@ package com.library.books.controllers;
 import com.library.books.integration.BooksClient;
 import com.library.books.integration.AbstractResponse;
 import com.library.books.integration.Response;
+import com.library.books.integration.common.Book;
 import com.library.books.integration.common.BooksResponse;
+import com.library.books.responses.book.BookResponse;
 import com.library.books.responses.book.SearchBookResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,21 +37,25 @@ public class BookController {
     }
 
     //http://localhost:8080/book/find/1
-    @RequestMapping(value = "/find/{id}", method = RequestMethod.POST)
-    public AbstractResponse findBook(@PathVariable("id") long id) {
-        return Response.ok();
+    @RequestMapping(value = "/find/{id}", method = RequestMethod.GET)
+    public AbstractResponse findBook(@PathVariable("id") String id) {
+        logger.info(String.format("find book by id = {%s} ", id));
+        BooksResponse booksResponse = booksClient.findBook(id);
+        return BookResponse.createBookResponseFromBooksResponse(booksResponse);
     }
 
     //http://localhost:8080/book/remove/1
     @RequestMapping(value = "/remove/{id}", method = RequestMethod.POST)
-    public AbstractResponse removeBook(@PathVariable("id") long id) {
-        return Response.ok();
+    public AbstractResponse removeBook(@PathVariable("id") String id) {
+        logger.info(String.format("remove book by id = {%s}", id));
+        return booksClient.removeBook(id);
     }
 
     //http://localhost:8080/book/add
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public AbstractResponse addBook() {
-        return Response.ok();
+    public AbstractResponse addBook(@RequestBody Book book) throws Exception {
+        logger.info(String.format("add new book %s", book));
+        return booksClient.addBook(book);
     }
 
 }

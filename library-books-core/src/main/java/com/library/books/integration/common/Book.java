@@ -1,6 +1,7 @@
 package com.library.books.integration.common;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -81,5 +82,49 @@ public class Book implements Serializable {
         this.image = image;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        Book book = (Book) o;
+
+        if (year != book.year) return false;
+        if (Float.compare(book.rating, rating) != 0) return false;
+        if (title != null ? !title.equals(book.title) : book.title != null) return false;
+        if (author != null ? !author.equals(book.author) : book.author != null) return false;
+        if (code != null ? !code.equals(book.code) : book.code != null) return false;
+        if (description != null ? !description.equals(book.description) : book.description != null) return false;
+        if (datePublication != null ? !datePublication.equals(book.datePublication) : book.datePublication != null)
+            return false;
+        return Arrays.equals(image, book.image);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = title != null ? title.hashCode() : 0;
+        result = 31 * result + (author != null ? author.hashCode() : 0);
+        result = 31 * result + (code != null ? code.hashCode() : 0);
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + year;
+        result = 31 * result + (datePublication != null ? datePublication.hashCode() : 0);
+        result = 31 * result + (rating != +0.0f ? Float.floatToIntBits(rating) : 0);
+        result = 31 * result + Arrays.hashCode(image);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "title='" + title + '\'' +
+                ", author='" + author + '\'' +
+                ", code='" + code + '\'' +
+                ", description='" + description + '\'' +
+                ", year=" + year +
+                ", datePublication=" + datePublication +
+                ", rating=" + rating +
+                ", image=" + Arrays.toString(image) +
+                '}';
+    }
 }

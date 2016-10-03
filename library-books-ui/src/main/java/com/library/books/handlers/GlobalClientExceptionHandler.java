@@ -17,9 +17,9 @@ import java.util.logging.Logger;
  * Created by skylar on 13.07.16.
  */
 @ControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalClientExceptionHandler {
 
-    private static final Logger logger = Logger.getLogger(GlobalExceptionHandler.class.getName());
+    private static final Logger logger = Logger.getLogger(GlobalClientExceptionHandler.class.getName());
 
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR, code = HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Throwable.class)

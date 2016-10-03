@@ -20,4 +20,23 @@ public interface BookService {
      */
     List<Book> searchBooks(int pageNumber, int recordsNumber) throws Exception;
 
+    /**
+     * Add new book to database
+     * @param book - object of representation book
+     */
+    void addBook(Book book);
+
+    /**
+     * Remove book by id
+     * @param id - unique identification of book
+     */
+    void removeBook(String id);
+
+    /**
+     * Find book by id
+     * @param id - unique identification of book
+     * @return {@link Book} which finded by id
+     */
+    Book findBook(String id);
+
 }

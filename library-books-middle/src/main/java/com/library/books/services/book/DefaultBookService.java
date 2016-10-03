@@ -31,4 +31,24 @@ public class DefaultBookService implements BookService {
         if (to > countBooks) to = countBooks;
         return bookRepositoryManager.findBooksBetween(from, to).stream().map(book -> bookMapper.convert(book, Book.class)).collect(Collectors.toList());
     }
+
+    @Override
+    public void addBook(Book book) {
+        ValidationUtils.throwExceptionIfNull(book);
+        com.library.books.dto.Book requestBook = bookMapper.reverseConvert(book, com.library.books.dto.Book.class);
+        bookRepositoryManager.addBook(requestBook);
+    }
+
+    @Override
+    public void removeBook(String id) {
+        ValidationUtils.throwExceptionIfEmpty(id);
+        bookRepositoryManager.removeBook(id);
+    }
+
+    @Override
+    public Book findBook(String id) {
+        ValidationUtils.throwExceptionIfEmpty(id);
+        com.library.books.dto.Book book = bookRepositoryManager.findBook(id);
+        return bookMapper.convert(book, Book.class);
+    }
 }

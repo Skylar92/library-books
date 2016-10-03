@@ -27,4 +27,16 @@ public class BookRepositoryManager {
         ArrayList<Book> books = Lists.newArrayList(all);
         return books.subList(from, to);
     }
+
+    public void addBook(Book book) {
+        bookRepository.save(book);
+    }
+
+    public void removeBook(String id) {
+        bookRepository.delete(id);
+    }
+
+    public Book findBook(String id) {
+        return bookRepository.findOne(id);
+    }
 }

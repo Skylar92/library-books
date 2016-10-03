@@ -20,4 +20,16 @@ public class BookMapper implements Mapper<Book, com.library.books.integration.co
         bookResult.setTitle(book.getTitle());
         return bookResult;
     }
+
+    @Override
+    public Book reverseConvert(com.library.books.integration.common.Book book, Class<Book> bookClass) {
+        Book bookResult = new Book();
+        bookResult.setAuthor(book.getAuthor());
+        bookResult.setCode(book.getCode());
+        bookResult.setDatePublication(book.getDatePublication());
+        bookResult.setRating(book.getRating());
+        bookResult.setDescription(book.getDescription());
+        bookResult.setTitle(book.getTitle());
+        return bookResult;
+    }
 }

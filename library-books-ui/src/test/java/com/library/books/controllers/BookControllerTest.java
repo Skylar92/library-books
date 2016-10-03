@@ -3,7 +3,7 @@ package com.library.books.controllers;
 import com.google.gson.*;
 import com.library.books.exceptions.ErrorCode;
 import com.library.books.exceptions.ServerException;
-import com.library.books.handlers.GlobalExceptionHandler;
+import com.library.books.handlers.GlobalClientExceptionHandler;
 import com.library.books.integration.BooksClient;
 import com.library.books.integration.Response;
 import com.library.books.integration.common.Book;
@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -45,18 +46,15 @@ public class BookControllerTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        this.gson = new GsonBuilder().create();
+        this.gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").create();
         this.mockMvc = MockMvcBuilders
                 .standaloneSetup(bookController)
-                .setControllerAdvice(new GlobalExceptionHandler()).build();
+                .setControllerAdvice(new GlobalClientExceptionHandler()).build();
     }
 
     @Test
     public void shouldBeResponseOkWhenCallSearchBooksWithNormalParameters() throws Exception {
-        List<Book> fixtureBooks = new ArrayList<>();
-        fixtureBooks.add(new Book());
-        fixtureBooks.add(new Book());
-        fixtureBooks.add(new Book());
+        List<Book> fixtureBooks = createFixtureListBooks();
         BooksResponse selectSearchBooks = new BooksResponse(fixtureBooks);
 
         Mockito.when(bookService.searchBooks(Mockito.anyInt(), Mockito.anyInt())).thenReturn(selectSearchBooks);
@@ -103,6 +101,44 @@ public class BookControllerTest {
     @Test
     public void shouldBeResponseNotFoundWhenCallSearchBooksWithMissingParameters() throws Exception {
         mockMvc.perform(post("/search/1")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldResponseOkWhenCallAddBookWithNormalParameters() throws Exception {
+        Book book = createDefaultBook();
+        System.out.println(gson.toJson(book));
+        Mockito.when(bookService.addBook(Mockito.any())).thenReturn(Response.ok());
+        MvcResult mvcResult = mockMvc.perform(post("http://localhost:8080/book/add")
+                .content(gson.toJson(book))
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        String responseJson = mvcResult.getResponse().getContentAsString();
+        Response response = gson.fromJson(responseJson, Response.class);
+        assertFalse(response.isError());
+        assertNull(response.getMessage());
+    }
+
+    //------------------------------------------------------------------------
+
+    private Book createDefaultBook() {
+        Book book = new Book();
+        book.setTitle("title");
+        book.setDescription("description");
+        book.setRating(1.5F);
+        book.setAuthor("Author");
+        book.setCode("ER23230-12");
+        book.setDatePublication(new Date());
+        book.setYear(2012);
+        return book;
+    }
+
+    private List<Book> createFixtureListBooks() {
+        List<Book> fixtureBooks = new ArrayList<>();
+        fixtureBooks.add(new Book());
+        fixtureBooks.add(new Book());
+        fixtureBooks.add(new Book());
+        return fixtureBooks;
     }
 
 }
