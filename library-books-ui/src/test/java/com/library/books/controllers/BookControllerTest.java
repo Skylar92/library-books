@@ -65,8 +65,8 @@ public class BookControllerTest {
         Mockito.verify(bookService, Mockito.only()).searchBooks(1, 10);
         String responseJson = mvcResult.getResponse().getContentAsString();
         SearchBookResponse response = gson.fromJson(responseJson, SearchBookResponse.class);
-        assertFalse(response.isError());
-        assertNull(response.getMessage());
+        //assertion
+        assertResponseWithoutError(response);
         assertEquals(response.getBooks().size(), 3);
     }
 
@@ -80,7 +80,8 @@ public class BookControllerTest {
         Mockito.verify(bookService, Mockito.only()).searchBooks(1, 10);
         String responseJson = mvcResult.getResponse().getContentAsString();
         Response response = gson.fromJson(responseJson, Response.class);
-        assertTrue(response.isError());
+        //assertion
+        assertResponseWithError(response);
         assertEquals("Something bad", response.getMessage());
     }
 
@@ -94,7 +95,8 @@ public class BookControllerTest {
         Mockito.verify(bookService, Mockito.only()).searchBooks(1, 10);
         String responseJson = mvcResult.getResponse().getContentAsString();
         Response response = gson.fromJson(responseJson, Response.class);
-        assertTrue(response.isError());
+        //assertion
+        assertResponseWithError(response);
         assertEquals("Something bad", response.getMessage());
     }
 
@@ -115,8 +117,42 @@ public class BookControllerTest {
                 .andReturn();
         String responseJson = mvcResult.getResponse().getContentAsString();
         Response response = gson.fromJson(responseJson, Response.class);
-        assertFalse(response.isError());
-        assertNull(response.getMessage());
+        //assertion
+        assertResponseWithoutError(response);
+    }
+
+    @Test
+    public void shouldBeResponseFailWhenAddBookServiceThrowException() throws Exception {
+        Book book = createDefaultBook();
+        Mockito.when(bookService.addBook(Mockito.any())).thenThrow(new IllegalArgumentException("Something bad"));
+        MvcResult mvcResult = mockMvc.perform(post("http://localhost:8080/book/add")
+                .content(gson.toJson(book))
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(status().isInternalServerError())
+                .andReturn();
+        Mockito.verify(bookService, Mockito.only()).addBook(Mockito.any());
+        String responseJson = mvcResult.getResponse().getContentAsString();
+        Response response = gson.fromJson(responseJson, Response.class);
+        //assertion
+        assertResponseWithError(response);
+        assertEquals("Something bad", response.getMessage());
+    }
+
+    @Test
+    public void shouldBeResponseFailWhenAddBookServiceThrowServerException() throws Exception {
+        Book book = createDefaultBook();
+        Mockito.when(bookService.addBook(Mockito.any())).thenThrow(new ServerException(ErrorCode.UNKNOWN, "Something bad"));
+        MvcResult mvcResult = mockMvc.perform(post("http://localhost:8080/book/add")
+                .content(gson.toJson(book))
+                .contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+        Mockito.verify(bookService, Mockito.only()).addBook(Mockito.any());
+        String responseJson = mvcResult.getResponse().getContentAsString();
+        Response response = gson.fromJson(responseJson, Response.class);
+        //assertion
+        assertResponseWithError(response);
+        assertEquals("Something bad", response.getMessage());
     }
 
     //------------------------------------------------------------------------
@@ -139,6 +175,18 @@ public class BookControllerTest {
         fixtureBooks.add(new Book());
         fixtureBooks.add(new Book());
         return fixtureBooks;
+    }
+
+    //------------------------------------------------------------
+
+    private static void assertResponseWithoutError(Response response) {
+        assertFalse(response.isError());
+        assertNull(response.getMessage());
+    }
+
+    private static void assertResponseWithError(Response response) {
+        assertTrue(response.isError());
+        assertNotNull(response.getMessage());
     }
 
 }
